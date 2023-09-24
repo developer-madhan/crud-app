@@ -2,30 +2,35 @@
 
 
 @section('content')
+
+<!-- SweetAlert2 Error Alert -->
+@if ($errors->any())
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'There was an error!',
+        html: `<ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>`,
+    });
+</script>
+@endif
+
+<!-- SweetAlert2 Error Alert -->
+@if(session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '{{ session('error') }}',
+    });
+</script>
+@endif
+
+
 <div class="container">
     <h2>Create a New Todo</h2>
 
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
-    @if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-    @endif
-
-    @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    @endif
+   
 
     <form method="POST" action="{{ route('todo.store') }}">
         @csrf

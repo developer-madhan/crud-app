@@ -71,7 +71,8 @@ class TodoController extends Controller
 
         $todo->update($validatedData);
 
-        return redirect()->route('todo.index');
+        return redirect()->route('todo.index')->with('success', 'Todo updated successfully.');
+
     }
 
     /**
@@ -81,6 +82,7 @@ class TodoController extends Controller
     {
         $todo->delete();
 
-        return redirect()->route('todo.index');
+        return redirect()->route('todo.index')->with('success', 'Todo deleted successfully.');
+
     }
 }

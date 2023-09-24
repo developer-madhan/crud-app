@@ -24,7 +24,7 @@ class StoretodoRequest extends FormRequest
         return [
             'title' => 'required|max:255',
             'description' => 'nullable',
-            'completed' => 'sometimes|boolean',
+            'completed' => 'boolean',
         ];
     }
 }

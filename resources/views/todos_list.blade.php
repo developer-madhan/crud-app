@@ -1,27 +1,54 @@
 @extends('layouts.common')
 @section('content')
 <h1>This is list page!!!</h1>
+
+<!-- SweetAlert2 Error Alert -->
 @if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'There was an error!',
+        html: `<ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>`,
+    });
+</script>
 @endif
 
+<!-- SweetAlert2 Error Alert -->
 @if(session('error'))
-<div class="alert alert-danger">
-    {{ session('error') }}
-</div>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: '{{ session('
+        error ') }}',
+    });
+</script>
 @endif
 
+<!-- SweetAlert2 Success Alert -->
 @if(session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    Toast.fire({
+        icon: 'success',
+        title: '{{ session('success') }}'
+    });
+</script>
 @endif
+
+
 <div class="container">
     @if(count($todos) > 0)
     <table class="table table-striped table-bordered">
@@ -51,10 +78,10 @@
                     </a>
 
                     <!-- Destroy Button -->
-                    <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" class="d-inline">
+                    <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" class="d-inline delete-form">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this todo?')">
+                        <button type="button" class="btn btn-danger btn-sm delete-todo">
                             <i class="fas fa-trash"></i> Delete
                         </button>
                     </form>
@@ -71,5 +98,29 @@
     @endif
 </div>
 
+<script>
+    $(document).ready(function() {
+        // Handle the click event for delete buttons
+        $('.delete-todo').click(function() {
+            const deleteForm = $(this).closest('.delete-form');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will not be able to recover this todo!',
+                icon: 'warning',
+                timer: 3000,
+                timerProgressBar: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteForm.submit();
+                }
+            });
+        });
+    });
+</script>
 
 @endsection

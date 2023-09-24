@@ -60,6 +60,7 @@ class TodoController extends Controller
     public function edit(Todo $todo)
     {
         return view('todo_edit', compact('todo'));
+        // return response()->json($todo);
     }
 
     /**

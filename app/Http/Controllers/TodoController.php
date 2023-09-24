@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\todo;
-use App\Http\Requests\StoretodoRequest;
-use App\Http\Requests\UpdatetodoRequest;
+use App\Models\Todo;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreTodoRequest;
+use App\Http\Requests\UpdateTodoRequest;
 
 class TodoController extends Controller
 {
@@ -13,7 +14,8 @@ class TodoController extends Controller
      */
     public function index()
     {
-        //
+        $todos = Todo::all();
+        return view('todos_list', compact('todos'));
     }
 
     /**
@@ -21,46 +23,64 @@ class TodoController extends Controller
      */
     public function create()
     {
-        //
+        return view('todo_new');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoretodoRequest $request)
+    public function store(StoreTodoRequest $request)
     {
-        //
+        // Validate the request data using the StoreTodoRequest form request class.
+        $validatedData = $request->validated();
+
+        // Attempt to create a new todo with the validated data.
+        try {
+            Todo::create($validatedData);
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur (e.g., database errors).
+            // You can customize this error handling logic.
+            return redirect()->back()->with('error', 'Error creating the todo.');
+        }
+
+        return redirect()->route('todo.index')->with('success', 'Todo created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(todo $todo)
+    public function show(Todo $todo)
     {
-        //
+        return view('todo_show', compact('todo'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(todo $todo)
+    public function edit(Todo $todo)
     {
-        //
+        return view('todo_edit', compact('todo'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatetodoRequest $request, todo $todo)
+    public function update(UpdateTodoRequest $request, Todo $todo)
     {
-        //
+        $validatedData = $request->validated();
+
+        $todo->update($validatedData);
+
+        return redirect()->route('todo.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(todo $todo)
+    public function destroy(Todo $todo)
     {
-        //
+        $todo->delete();
+
+        return redirect()->route('todo.index');
     }
 }
